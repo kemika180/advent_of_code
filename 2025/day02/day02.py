@@ -1,6 +1,7 @@
 from sys import argv
 from typing import List, Set
 from collections import Counter
+from pytictoc import TicToc
 
 # https://adventofcode.com/2025/day/2
 
@@ -60,16 +61,23 @@ def process_ranges2(ranges: List[tuple]) -> Set[int]:
 
 
 def main():
+    t = TicToc()
+
     if len(argv) < 2:
         filename = "example.txt"
     else:
         filename = argv[1]
     data = read_file(filename)
     ranges = parse_data(data)
+
+    t.tic()
     ids1 = process_ranges1(ranges)
     print(f"Part 1:\n  Total of invalid IDs is {sum(ids1)}.")
+    t.toc()
+    t.tic()
     ids2 = process_ranges2(ranges)
     print(f"Part 2:\n  Total of invalid IDs is {sum(ids2)}.")
+    t.toc()
 
 
 if __name__ == '__main__':
