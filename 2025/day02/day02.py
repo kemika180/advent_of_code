@@ -46,6 +46,8 @@ def process_ranges2(ranges: List[tuple]) -> Set[int]:
             number = str(num)
             length = len(number)
             for n in range(2, length+1):
+                if num in invalid_ids:
+                    continue
                 if length % n != 0:
                     continue
                 l = length // n
