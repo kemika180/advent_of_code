@@ -23,7 +23,6 @@ def parse_data(data: List[str]) -> List[List[int]]:
         output.append(new_list)
     return output
 
-
 def process_data(data: List[List[int]]) -> List[int]:
     output = []
     for line in data:
@@ -68,7 +67,6 @@ def main():
 
     output2 = process_data2(parsed_data)
     print(f"Part 2:\nSum of the resultant numbers is {sum(output2)}.")
-
 
 if __name__ == '__main__':
     logger = start_logging()
