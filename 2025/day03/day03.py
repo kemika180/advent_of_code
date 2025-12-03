@@ -2,8 +2,6 @@ from sys import argv
 from typing import List
 from aoc_logging import start_logging
 
-
-
 def read_file(filename: str) -> List[str]:
     output = []
     with open(filename) as file:
