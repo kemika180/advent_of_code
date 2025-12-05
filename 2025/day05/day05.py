@@ -82,11 +82,11 @@ def main():
     ranges, items = read_file(filename)
     t.tic()
     matches = check_items(ranges, items)
-    print(f"Part 1:\n  There are {matches} good items.")
+    logger.info(f"Part 1:\n  There are {matches} good items.")
     t.toc()
     t.tic()
     count = check_ranges(ranges)
-    print(f"Part 2:\n  There are {count} possible items in the ranges provided.")
+    logger.info(f"Part 2:\n  There are {count} possible items in the ranges provided.")
     t.toc()
 
 if __name__ == '__main__':
