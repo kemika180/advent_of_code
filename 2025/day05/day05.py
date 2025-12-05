@@ -29,7 +29,6 @@ def read_file(filename: str) -> Tuple[List, List]:
 def check_items(ranges: List[tuple], items: List[int]) -> int:
     matches = 0
     ranges.sort(key=lambda range: range[0])
-    logger.info(ranges)
     for item in items:
         for r in ranges:
             if item < r[0]:
@@ -44,6 +43,35 @@ def check_items(ranges: List[tuple], items: List[int]) -> int:
 
     return matches
 
+def check_ranges(ranges: List[tuple]) -> int:
+    checked = []
+    count = 0
+    start = len(ranges)
+    end = 0
+    ranges.sort(key=lambda range: range[0])
+    for i, (low, high) in enumerate(ranges):
+        end += 1
+        if (low, high) in checked:
+            logger.info(f"({low}, {high}) already checked")
+            continue
+        logger.info(f"checking ({low}, {high})")
+        for (low2, high2) in ranges[i+1:]:
+            if high >= low2 or high + 1 == low2:
+                logger.info(f"combining ({low}, {high}) and ({low2}, {high2})")
+                high = max(high, high2)
+                checked.append((low2, high2))
+                continue
+            else:
+                logger.info(f"counting ({low}, {high})")
+                count += len(range(low, high+1))
+                break
+        else:
+            logger.info(f"counting ({low}, {high})")
+            count += len(range(low, high+1))
+
+    assert start == end
+    return count
+
 def main():
     if len(argv) == 1:
         filename = "example.txt"
@@ -55,6 +83,10 @@ def main():
     t.tic()
     matches = check_items(ranges, items)
     print(f"Part 1:\n  There are {matches} good items.")
+    t.toc()
+    t.tic()
+    count = check_ranges(ranges)
+    print(f"Part 2:\n  There are {count} possible items in the ranges provided.")
     t.toc()
 
 if __name__ == '__main__':
