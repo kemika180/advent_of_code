@@ -1,7 +1,10 @@
 from sys import argv
 from aoc_logging import start_logging
 from pytictoc import TicToc
-from itertools import combinations, combinations_with_replacement
+from itertools import combinations
+import numpy as np
+from numpy.typing import NDArray
+from scipy.optimize import milp, LinearConstraint
 
 def read_file(filename: str) -> list:
     data_list = []
@@ -50,9 +53,33 @@ def process_lights(data: list) -> int:
 def process_joltages(data: list) -> int:
     pushes = 0
     for item in data:
-        joltages = list(item[2])
+        joltages = item[2]
         buttons = item[1]
+        vectors = []
         logger.info(f"for machine defined by {item}")
+        for button in buttons:
+            vector = [0]*len(joltages)
+            if isinstance(button, int):
+                button = [button]
+            for wire in button:
+                vector[wire] = 1
+            vectors.append(np.array(vector))
+        vectors = np.array(vectors).T
+        logger.info(f"joltages = {list(joltages)}")
+        logger.info(f"vectors =\n{vectors}")
+        constraints = LinearConstraint(vectors, lb=joltages, ub=joltages)
+        integrality = np.ones(shape=[len(buttons)])
+        c = np.ones(shape=[len(buttons)])
+        res = milp(c=c, integrality=integrality, constraints=constraints)
+        presses = [int(round(item)) for item in res.x]
+        assert res.success
+        logger.info(f"presses = {presses}")
+        logger.info(f"sum = {sum(presses)}")
+        logger.info(f"fun = {round(res.fun)}")
+        if int(round(res.fun)) != sum(presses):
+            logger.info(f"sum/func mismatch:\n{res}")
+        pushes += int(round(res.fun))
+        logger.info(f"total = {pushes}")
 
     return pushes
 
@@ -70,8 +97,9 @@ def main():
     t.toc()
     t.tic()
     output = process_joltages(data)
-    logger.info(f"Part 2:\n  Pushes required to match joltages: {output}")
+    logger.info(f"Part 2:\n  Pushes required to match required joltages: {output}")
     t.toc()
+    assert output > 20275
 
 if __name__ == '__main__':
     logger = start_logging()
